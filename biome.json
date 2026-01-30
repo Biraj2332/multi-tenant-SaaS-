@@ -34,7 +34,6 @@
   "javascript": {
     "formatter": {
       "quoteStyle": "single",
-      "trailingComma": "es5",
       "semicolons": "always"
     }
   },
@@ -46,7 +45,8 @@
       ".next",
       "coverage",
       "*.min.*",
-      "CHANGELOG.md"
+      "CHANGELOG.md",
+      "tsconfig.*.json"
     ]
   }
 }

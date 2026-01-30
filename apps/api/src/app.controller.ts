@@ -33,7 +33,7 @@ export class AppController {
   @Get()
   @ApiOperation({
     summary: 'API Welcome',
-    description: 'Returns a welcome message for the TenantOps API'
+    description: 'Returns a welcome message for the TenantOps API',
   })
   @ApiResponse({
     status: HttpStatus.OK,
@@ -46,7 +46,7 @@ export class AppController {
   @Get('health')
   @ApiOperation({
     summary: 'Health Check',
-    description: 'Check the health status of the API service'
+    description: 'Check the health status of the API service',
   })
   @ApiResponse({
     status: HttpStatus.OK,
@@ -70,7 +70,7 @@ export class AppController {
   @ApiTags('tenants')
   @ApiOperation({
     summary: 'Get all tenants',
-    description: 'Retrieve a list of all tenants (sample data for now)'
+    description: 'Retrieve a list of all tenants (sample data for now)',
   })
   @ApiResponse({
     status: HttpStatus.OK,
@@ -114,7 +114,7 @@ export class AppController {
   @ApiTags('users')
   @ApiOperation({
     summary: 'Get all users',
-    description: 'Retrieve a list of all users across tenants (sample data for now)'
+    description: 'Retrieve a list of all users across tenants (sample data for now)',
   })
   @ApiResponse({
     status: HttpStatus.OK,

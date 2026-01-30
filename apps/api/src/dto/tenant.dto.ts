@@ -3,13 +3,13 @@ import { ApiProperty } from '@nestjs/swagger';
 export enum TenantPlan {
   FREE = 'free',
   PRO = 'pro',
-  ENTERPRISE = 'enterprise'
+  ENTERPRISE = 'enterprise',
 }
 
 export enum TenantStatus {
   ACTIVE = 'active',
   INACTIVE = 'inactive',
-  SUSPENDED = 'suspended'
+  SUSPENDED = 'suspended',
 }
 
 export class CreateTenantDto {
@@ -22,10 +22,10 @@ export class CreateTenantDto {
   @ApiProperty({ description: 'Owner email', example: 'owner@acme.com' })
   ownerEmail: string;
 
-  @ApiProperty({ 
-    description: 'Subscription plan', 
+  @ApiProperty({
+    description: 'Subscription plan',
     enum: TenantPlan,
-    default: TenantPlan.FREE 
+    default: TenantPlan.FREE,
   })
   plan?: TenantPlan;
 }

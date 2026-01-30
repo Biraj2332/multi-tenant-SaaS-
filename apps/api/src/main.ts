@@ -4,7 +4,7 @@ import { SwaggerModule, DocumentBuilder } from '@nestjs/swagger';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
-  
+
   // Swagger Configuration
   const config = new DocumentBuilder()
     .setTitle('TenantOps API')
@@ -26,7 +26,7 @@ async function bootstrap() {
     .addTag('users', 'User management')
     .addTag('health', 'Health checks')
     .build();
-    
+
   const document = SwaggerModule.createDocument(app, config);
   SwaggerModule.setup('api', app, document, {
     customSiteTitle: 'TenantOps API Docs',
@@ -36,15 +36,15 @@ async function bootstrap() {
       .swagger-ui .topbar { background-color: #4f46e5; }
     `,
   });
-  
+
   // Enable CORS for React app
   app.enableCors({
     origin: 'http://localhost:5173',
     credentials: true,
   });
-  
+
   await app.listen(3001);
-  console.log('íº€ TenantOps API running on http://localhost:3001');
-  console.log('í³š Swagger Docs: http://localhost:3001/api');
+  console.log('ï¿½ï¿½ï¿½ TenantOps API running on http://localhost:13000');
+  console.log('ï¿½ï¿½ï¿½ Swagger Docs: http://localhost:13000/api');
 }
 bootstrap();

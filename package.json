@@ -1,30 +1,25 @@
 {
-  "name": "api",
+  "name": "tenantops",
   "private": true,
-  "version": "1.0.0",
-  "description": "TenantOps Backend API",
   "scripts": {
-    "start": "node dist/main.js",
-    "dev": "nodemon",
-    "build": "tsc",
+    "dev": "concurrently \"npm run dev:web\" \"npm run dev:api\"",
+    "dev:web": "cd apps/web && npm run dev",
+    "dev:api": "cd apps/api && npm run dev",
+    "build": "npm run build:web && npm run build:api",
+    "build:web": "cd apps/web && npm run build",
+    "build:api": "cd apps/api && npm run build",
     "format": "biome format --write .",
+    "format:web": "cd apps/web && npm run format",
+    "format:api": "cd apps/api && npm run format",
     "lint": "biome lint .",
-    "swagger": "openapi-typescript http://localhost:3001/api-json -o ./src/types/swagger.d.ts"
-  },
-  "dependencies": {
-    "@nestjs/common": "^10.0.0",
-    "@nestjs/core": "^10.0.0",
-    "@nestjs/platform-express": "^10.0.0",
-    "@nestjs/swagger": "^7.0.0",
-    "reflect-metadata": "^0.1.13",
-    "rxjs": "^7.8.0"
+    "lint:web": "cd apps/web && biome lint .",
+    "lint:api": "cd apps/api && biome lint .",
+    "check": "biome check .",
+    "clean": "rm -rf node_modules apps/*/node_modules packages/*/node_modules",
+    "swagger": "cd apps/api && npm run swagger"
   },
   "devDependencies": {
-    "@types/node": "^20.0.0",
-    "nodemon": "^3.0.0",
-    "ts-node": "^10.9.0",
-    "typescript": "^5.0.0",
     "@biomejs/biome": "^1.5.3",
-    "openapi-typescript": "^6.7.0"
+    "concurrently": "^8.2.2"
   }
 }
