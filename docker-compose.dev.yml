@@ -1,0 +1,81 @@
+version: '3.8'
+
+services:
+  # PostgreSQL Database
+  postgres:
+    image: postgres:15-alpine
+    container_name: tenantops-postgres-dev
+    environment:
+      POSTGRES_USER: tenantops
+      POSTGRES_PASSWORD: password
+      POSTGRES_DB: tenantops_dev
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data_dev:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U tenantops"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  # Redis Cache
+  redis:
+    image: redis:7-alpine
+    container_name: tenantops-redis-dev
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis_data_dev:/data
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  # API Service
+  api:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      target: development
+    container_name: tenantops-api-dev
+    ports:
+      - "13000:13000"
+    environment:
+      DATABASE_URL: postgresql://tenantops:password@postgres:5432/tenantops_dev
+      REDIS_URL: redis://redis:6379
+      NODE_ENV: development
+      CORS_ORIGIN: http://localhost:5173
+    volumes:
+      - ./apps/api:/app/apps/api
+      - /app/apps/api/node_modules
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    command: sh -c "cd apps/api && npm run dev"
+
+  # Web Service
+  web:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      target: development
+    container_name: tenantops-web-dev
+    ports:
+      - "5173:5173"
+    environment:
+      VITE_API_URL: http://localhost:13000
+      VITE_APP_ENV: development
+    volumes:
+      - ./apps/web:/app/apps/web
+      - /app/apps/web/node_modules
+    depends_on:
+      - api
+    command: sh -c "cd apps/web && npm run dev -- --host 0.0.0.0"
+
+volumes:
+  postgres_data_dev:
+  redis_data_dev:
