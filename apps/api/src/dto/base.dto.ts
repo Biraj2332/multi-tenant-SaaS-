@@ -41,3 +41,23 @@ export class PaginatedResponseDto<T> {
   @ApiProperty({ description: 'Total number of pages' })
   totalPages: number;
 }
+
+export class HealthResponse {
+  @ApiProperty({ description: 'Service status', example: 'healthy' })
+  status: string;
+
+  @ApiProperty({ description: 'Timestamp of the check' })
+  timestamp: string;
+
+  @ApiProperty({ description: 'Service name', example: 'tenantops-api' })
+  service: string;
+
+  @ApiProperty({ description: 'Service version', example: '1.0.0' })
+  version: string;
+
+  @ApiProperty({ description: 'Environment', example: 'development' })
+  environment?: string;
+
+  @ApiProperty({ description: 'Uptime in seconds' })
+  uptime?: number;
+}

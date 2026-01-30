@@ -1,9 +1,27 @@
 import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
 import { SwaggerModule, DocumentBuilder } from '@nestjs/swagger';
+import { ConfigService } from '@nestjs/config';
+import { ValidationPipe } from '@nestjs/common';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
+  const configService = app.get(ConfigService);
+
+  // Global validation pipe
+  app.useGlobalPipes(
+    new ValidationPipe({
+      whitelist: true,
+      transform: true,
+      forbidNonWhitelisted: true,
+    }),
+  );
+
+  // Global prefix
+  const apiPrefix = configService.get('apiPrefix');
+  if (apiPrefix) {
+    app.setGlobalPrefix(apiPrefix);
+  }
 
   // Swagger Configuration
   const config = new DocumentBuilder()
@@ -28,7 +46,7 @@ async function bootstrap() {
     .build();
 
   const document = SwaggerModule.createDocument(app, config);
-  SwaggerModule.setup('api', app, document, {
+  SwaggerModule.setup('docs', app, document, {
     customSiteTitle: 'TenantOps API Docs',
     customfavIcon: 'https://nestjs.com/img/logo-small.svg',
     customCss: `
@@ -37,14 +55,22 @@ async function bootstrap() {
     `,
   });
 
-  // Enable CORS for React app
+  // CORS Configuration
+  const corsOrigin = configService.get('cors.origin');
   app.enableCors({
-    origin: 'http://localhost:5173',
+    origin: corsOrigin,
     credentials: true,
+    methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH', 'OPTIONS'],
+    allowedHeaders: ['Content-Type', 'Authorization', 'Accept'],
   });
 
-  await app.listen(3001);
-  console.log('ÔøΩÔøΩÔøΩ TenantOps API running on http://localhost:13000');
-  console.log('ÔøΩÔøΩÔøΩ Swagger Docs: http://localhost:13000/api');
+  // Get port from config
+  const port = configService.get('port');
+  await app.listen(port);
+  
+  console.log(`Ì∫Ä TenantOps API running on port ${port}`);
+  console.log(`Ì≥ö Swagger Docs: http://localhost:${port}/docs`);
+  console.log(`Ìºê API Base: http://localhost:${port}/${apiPrefix}`);
+  console.log(`Ì≥ù Environment: ${configService.get('nodeEnv')}`);
 }
 bootstrap();

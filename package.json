@@ -8,18 +8,20 @@
     "build": "npm run build:web && npm run build:api",
     "build:web": "cd apps/web && npm run build",
     "build:api": "cd apps/api && npm run build",
-    "format": "biome format --write .",
-    "format:web": "cd apps/web && npm run format",
-    "format:api": "cd apps/api && npm run format",
-    "lint": "biome lint .",
-    "lint:web": "cd apps/web && biome lint .",
-    "lint:api": "cd apps/api && biome lint .",
-    "check": "biome check .",
+    "format": "npm run format:web && npm run format:api",
+    "format:web": "cd apps/web && npx biome format --write .",
+    "format:api": "cd apps/api && npx biome format --write .",
+    "lint": "npm run lint:web && npm run lint:api",
+    "lint:web": "cd apps/web && npx biome lint .",
+    "lint:api": "cd apps/api && npx biome lint .",
+    "check": "npx biome check .",
     "clean": "rm -rf node_modules apps/*/node_modules packages/*/node_modules",
-    "swagger": "cd apps/api && npm run swagger"
+    "swagger": "cd apps/api && npm run swagger",
+    "env:setup": "cp apps/api/.env.example apps/api/.env && cp apps/web/.env.example apps/web/.env",
+    "start": "npm run dev"
   },
   "devDependencies": {
     "@biomejs/biome": "^1.5.3",
-    "concurrently": "^8.2.2"
+    "concurrently": "^8.0.0"
   }
 }

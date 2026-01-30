@@ -1,35 +1,15 @@
 import { Controller, Get, HttpStatus } from '@nestjs/common';
-import { ApiTags, ApiOperation, ApiResponse, ApiBearerAuth } from '@nestjs/swagger';
-
-class HealthResponse {
-  status: string;
-  timestamp: string;
-  service: string;
-  version: string;
-}
-
-class TenantDto {
-  id: string;
-  name: string;
-  slug: string;
-  plan: 'free' | 'pro' | 'enterprise';
-  status: 'active' | 'inactive' | 'suspended';
-  createdAt: string;
-  updatedAt: string;
-}
-
-class UserDto {
-  id: string;
-  name: string;
-  email: string;
-  tenantId: string;
-  role: 'owner' | 'admin' | 'member' | 'viewer';
-  createdAt: string;
-}
+import { ConfigService } from '@nestjs/config';
+import { ApiTags, ApiOperation, ApiResponse } from '@nestjs/swagger';
+import { HealthResponse } from './dto/base.dto';
+import { TenantResponseDto, TenantPlan, TenantStatus } from './dto/tenant.dto';
+import { UserDto, UserRole } from './dto/user.dto';
 
 @ApiTags('health')
 @Controller()
 export class AppController {
+  constructor(private configService: ConfigService) {}
+
   @Get()
   @ApiOperation({
     summary: 'API Welcome',
@@ -39,8 +19,12 @@ export class AppController {
     status: HttpStatus.OK,
     description: 'Welcome message returned successfully',
   })
-  getHello(): string {
-    return 'TenantOps API v1.0';
+  getHello(): { message: string; version: string; environment: string } {
+    return {
+      message: 'TenantOps API',
+      version: '1.0.0',
+      environment: this.configService.get('nodeEnv'),
+    };
   }
 
   @Get('health')
@@ -53,16 +37,30 @@ export class AppController {
     description: 'Service is healthy',
     type: HealthResponse,
   })
-  @ApiResponse({
-    status: HttpStatus.SERVICE_UNAVAILABLE,
-    description: 'Service is unhealthy',
-  })
   getHealth(): HealthResponse {
     return {
       status: 'healthy',
       timestamp: new Date().toISOString(),
       service: 'tenantops-api',
       version: '1.0.0',
+      environment: this.configService.get('nodeEnv'),
+      uptime: process.uptime(),
+    };
+  }
+
+  @Get('config')
+  @ApiOperation({
+    summary: 'Get API Configuration',
+    description: 'Get current API configuration (non-sensitive data only)',
+  })
+  getConfig() {
+    return {
+      environment: this.configService.get('nodeEnv'),
+      port: this.configService.get('port'),
+      apiPrefix: this.configService.get('apiPrefix'),
+      appUrl: this.configService.get('appUrl'),
+      apiUrl: this.configService.get('apiUrl'),
+      corsOrigin: this.configService.get('cors.origin'),
     };
   }
 
@@ -75,17 +73,16 @@ export class AppController {
   @ApiResponse({
     status: HttpStatus.OK,
     description: 'List of tenants returned successfully',
-    type: [TenantDto],
+    type: [TenantResponseDto],
   })
-  @ApiBearerAuth('JWT-auth')
-  getTenants(): TenantDto[] {
+  getTenants(): TenantResponseDto[] {
     return [
       {
         id: '1',
         name: 'Acme Corporation',
         slug: 'acme',
-        plan: 'enterprise',
-        status: 'active',
+        plan: TenantPlan.ENTERPRISE,
+        status: TenantStatus.ACTIVE,
         createdAt: new Date().toISOString(),
         updatedAt: new Date().toISOString(),
       },
@@ -93,8 +90,8 @@ export class AppController {
         id: '2',
         name: 'Beta Industries',
         slug: 'beta',
-        plan: 'pro',
-        status: 'active',
+        plan: TenantPlan.PRO,
+        status: TenantStatus.ACTIVE,
         createdAt: new Date().toISOString(),
         updatedAt: new Date().toISOString(),
       },
@@ -102,8 +99,8 @@ export class AppController {
         id: '3',
         name: 'Gamma Tech',
         slug: 'gamma',
-        plan: 'free',
-        status: 'active',
+        plan: TenantPlan.FREE,
+        status: TenantStatus.ACTIVE,
         createdAt: new Date().toISOString(),
         updatedAt: new Date().toISOString(),
       },
@@ -121,7 +118,6 @@ export class AppController {
     description: 'List of users returned successfully',
     type: [UserDto],
   })
-  @ApiBearerAuth('JWT-auth')
   getUsers(): UserDto[] {
     return [
       {
@@ -129,7 +125,7 @@ export class AppController {
         name: 'John Doe',
         email: 'john@acme.com',
         tenantId: '1',
-        role: 'owner',
+        role: UserRole.OWNER,
         createdAt: new Date().toISOString(),
       },
       {
@@ -137,7 +133,7 @@ export class AppController {
         name: 'Jane Smith',
         email: 'jane@beta.com',
         tenantId: '2',
-        role: 'admin',
+        role: UserRole.ADMIN,
         createdAt: new Date().toISOString(),
       },
       {
@@ -145,7 +141,7 @@ export class AppController {
         name: 'Bob Wilson',
         email: 'bob@gamma.com',
         tenantId: '3',
-        role: 'member',
+        role: UserRole.MEMBER,
         createdAt: new Date().toISOString(),
       },
     ];
