@@ -68,9 +68,9 @@ async function bootstrap() {
   const port = configService.get('port');
   await app.listen(port);
   
-  console.log(`íº€ TenantOps API running on port ${port}`);
-  console.log(`í³š Swagger Docs: http://localhost:${port}/docs`);
-  console.log(`í¼ API Base: http://localhost:${port}/${apiPrefix}`);
-  console.log(`í³ Environment: ${configService.get('nodeEnv')}`);
+  console.log(`ğŸš€ TenantOps API running on port ${port}`);
+  console.log(`ğŸ“š Swagger Docs: http://localhost:${port}/docs`);
+  console.log(`ğŸ”— API Base: http://localhost:${port}/${apiPrefix}`);
+  console.log(`ğŸŒ Environment: ${configService.get('nodeEnv')}`);
 }
 bootstrap();

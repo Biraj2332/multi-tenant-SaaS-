@@ -1,40 +1,52 @@
 {
   "name": "tenantops",
   "private": true,
+  "pnpm": {
+    "onlyBuiltDependencies": [
+      "@biomejs/biome",
+      "@nestjs/core",
+      "@prisma/client",
+      "@prisma/engines",
+      "bcrypt",
+      "esbuild",
+      "prisma",
+      "sharp"
+    ]
+  },
   "scripts": {
-    "dev": "concurrently \"npm run dev:web\" \"npm run dev:api\"",
-    "dev:web": "cd apps/web && npm run dev",
-    "dev:api": "cd apps/api && npm run dev",
-    "build": "npm run build:web && npm run build:api",
-    "build:web": "cd apps/web && npm run build",
-    "build:api": "cd apps/api && npm run build",
-    "format": "npm run format:web && npm run format:api",
-    "format:web": "cd apps/web && npx biome format --write .",
-    "format:api": "cd apps/api && npx biome format --write .",
-    "lint": "npm run lint:web && npm run lint:api",
-    "lint:web": "cd apps/web && npx biome lint .",
-    "lint:api": "cd apps/api && npx biome lint .",
-    "check": "npx biome check .",
+    "dev": "concurrently \"pnpm run dev:api\" \"pnpm run dev:web\"",
+    "dev:web": "cd apps/web && pnpm dev",
+    "dev:api": "cd apps/api && pnpm dev",
+    "build": "pnpm run build:api && pnpm run build:web",
+    "build:web": "cd apps/web && pnpm build",
+    "build:api": "cd apps/api && pnpm build",
+    "format": "pnpm run format:api && pnpm run format:web",
+    "format:web": "cd apps/web && pnpm biome format --write .",
+    "format:api": "cd apps/api && pnpm biome format --write .",
+    "lint": "pnpm run lint:api && pnpm run lint:web",
+    "lint:web": "cd apps/web && pnpm biome lint .",
+    "lint:api": "cd apps/api && pnpm biome lint .",
+    "check": "pnpm biome check .",
     "clean": "rm -rf node_modules apps/*/node_modules packages/*/node_modules",
-    "swagger": "cd apps/api && npm run swagger",
-    "env:setup": "cp apps/api/.env.example apps/api/.env && cp apps/web/.env.example apps/web/.env",
-    
-    "docker:db": "docker-compose up -d",
-    "docker:db-down": "docker-compose down",
-    "docker:dev": "docker-compose -f docker-compose.dev.yml up -d",
-    "docker:dev-down": "docker-compose -f docker-compose.dev.yml down",
-    "docker:dev-logs": "docker-compose -f docker-compose.dev.yml logs -f",
-    "docker:dev-build": "docker-compose -f docker-compose.dev.yml build --no-cache",
-    
-    "docker:prod": "docker-compose -f docker-compose.prod.yml up -d",
-    "docker:prod-down": "docker-compose -f docker-compose.prod.yml down",
-    "docker:prod-build": "docker-compose -f docker-compose.prod.yml build",
-    
+    "swagger": "cd apps/api && pnpm swagger",
+    "env:setup": "cp -n apps/api/.env.example apps/api/.env; cp -n apps/web/.env.example apps/web/.env; echo 'env files ready'",
+
+    "docker:db": "docker compose up -d",
+    "docker:db-down": "docker compose down",
+    "docker:dev": "docker compose -f docker-compose.dev.yml up -d",
+    "docker:dev-down": "docker compose -f docker-compose.dev.yml down",
+    "docker:dev-logs": "docker compose -f docker-compose.dev.yml logs -f",
+    "docker:dev-build": "docker compose -f docker-compose.dev.yml build --no-cache",
+
+    "docker:prod": "docker compose -f docker-compose.prod.yml up -d",
+    "docker:prod-down": "docker compose -f docker-compose.prod.yml down",
+    "docker:prod-build": "docker compose -f docker-compose.prod.yml build",
+
     "docker:shell-api": "docker exec -it tenantops-api-dev /bin/sh",
     "docker:shell-web": "docker exec -it tenantops-web-dev /bin/sh",
     "docker:db-connect": "docker exec -it tenantops-postgres-dev psql -U tenantops -d tenantops_dev",
     "docker:redis-cli": "docker exec -it tenantops-redis-dev redis-cli",
-    "docker:clean": "docker-compose -f docker-compose.dev.yml down -v && docker system prune -af"
+    "docker:clean": "docker compose -f docker-compose.dev.yml down -v && docker system prune -af"
   },
   "devDependencies": {
     "@biomejs/biome": "^1.5.3",

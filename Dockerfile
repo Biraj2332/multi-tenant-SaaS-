@@ -12,28 +12,33 @@ RUN apk add --no-cache \
     g++ \
     postgresql-client
 
+# Enable pnpm via corepack
+RUN corepack enable && corepack prepare pnpm@latest --activate
+
 # Set working directory
 WORKDIR /app
 
-# Copy package files
-COPY package.json ./
-COPY apps/web/package.json ./apps/web/
+# Copy workspace manifest files first (better layer caching)
+COPY package.json pnpm-workspace.yaml ./
 COPY apps/api/package.json ./apps/api/
+COPY apps/web/package.json ./apps/web/
+COPY packages/contracts/package.json ./packages/contracts/
+COPY packages/core/package.json ./packages/core/
+COPY packages/shared/package.json ./packages/shared/
+COPY packages/ui/package.json ./packages/ui/
+COPY packages/typescript-config/package.json ./packages/typescript-config/
 
-# Install dependencies
-RUN npm install
+# Install all dependencies
+RUN pnpm install --frozen-lockfile || pnpm install
 
-# Copy source code
+# Copy full source code
 COPY . .
 
 # Stage 2: Development
 FROM base AS development
 
-# Install development dependencies globally
-RUN npm install -g nodemon
-
 # Expose ports
-EXPOSE 13000 5173 5432 6379 8080
+EXPOSE 13000 5173
 
 # Create non-root user
 RUN addgroup -g 1001 -S nodejs && \
@@ -44,8 +49,8 @@ RUN chown -R nodejs:nodejs /app
 USER nodejs
 
 # Health check for API
-HEALTHCHECK --interval=30s --timeout=5s --start-period=10s --retries=3 \
+HEALTHCHECK --interval=30s --timeout=5s --start-period=15s --retries=3 \
     CMD curl -f http://localhost:13000/api/v1/health || exit 1
 
-# Default command
-CMD ["npm", "run", "dev"]
+# Default command (overridden per-service in docker-compose)
+CMD ["pnpm", "dev"]

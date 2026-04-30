@@ -50,23 +50,19 @@ export const getEnv = (key: string): string => {
 };
 
 // Validate required environment variables
-export const validateEnv = () => {
+export const validateEnv = (): boolean => {
   const required = ['VITE_API_URL'];
   const missing = required.filter((key) => !import.meta.env[key]);
-
   if (missing.length > 0) {
-    console.error('Missing required environment variables:', missing);
-    if (config.isProduction) {
-      throw new Error(`Missing environment variables: ${missing.join(', ')}`);
-    }
+    console.warn(`Missing environment variables: ${missing.join(', ')}`);
   }
-
   return missing.length === 0;
 };
 
+
 // Log configuration (only in development)
 if (config.isDevelopment) {
-  console.log('��� Application Configuration:', {
+  console.log('[Config] Application Configuration:', {
     api: config.api,
     app: config.app,
     features: config.features,

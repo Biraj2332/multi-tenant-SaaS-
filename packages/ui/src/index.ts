@@ -1,2 +1,6 @@
+// CVA-based Button (with variants)
 export * from './components/Button';
-// Add more exports as you create components
+// Primitive components
+export * from './card';
+export * from './code';
+

@@ -138,7 +138,7 @@ function App() {
       <main className="main">
         {/* Configuration Overview */}
         <section className="config-section">
-          <h2>í³‹ Configuration</h2>
+          <h2>âš™ï¸ Configuration</h2>
           <div className="config-grid">
             <div className="config-card">
               <h3>Frontend Config</h3>
@@ -163,7 +163,7 @@ function App() {
 
         {/* API Health Status */}
         <section className="health-section">
-          <h2>í¿¥ API Health Status</h2>
+          <h2>ğŸ’š API Health Status</h2>
           <div className="health-card">
             <div className="health-details">
               <div className="health-item">
@@ -190,7 +190,7 @@ function App() {
 
         {/* Tenants Section */}
         <section className="tenants-section">
-          <h2>í¿¢ Tenants ({tenants.length})</h2>
+          <h2>ğŸ¢ Tenants ({tenants.length})</h2>
           <div className="tenants-grid">
             {tenants.map((tenant) => (
               <div key={tenant.id} className="tenant-card">
@@ -211,7 +211,7 @@ function App() {
 
         {/* Users Section */}
         <section className="users-section">
-          <h2>í±¥ Users ({users.length})</h2>
+          <h2>ğŸ‘¥ Users ({users.length})</h2>
           <div className="users-table-container">
             <table className="users-table">
               <thead>
@@ -244,7 +244,7 @@ function App() {
 
         {/* Connection Info */}
         <section className="info-section">
-          <h2>í´— Connection Information</h2>
+          <h2>ğŸ”— Connection Information</h2>
           <div className="info-card">
             <h3>API Endpoints</h3>
             <ul className="endpoints-list">
@@ -267,10 +267,10 @@ function App() {
             
             <div className="links">
               <a href={`${config.api.url}/docs`} target="_blank" rel="noopener noreferrer" className="link-button">
-                í³š View API Documentation
+                ğŸ“š View API Documentation
               </a>
               <a href={config.api.url} target="_blank" rel="noopener noreferrer" className="link-button">
-                í´— Open API Base URL
+                ğŸ”— Open API Base URL
               </a>
             </div>
           </div>

@@ -1,63 +1,129 @@
-# Turborepo starter
+# TenantOps — Multi-Tenant SaaS Platform
 
-This Turborepo starter is maintained by the Turborepo core team.
+A production-ready multi-tenant SaaS boilerplate built with **NestJS**, **React (Vite)**, **PostgreSQL**, and **Redis** in a **pnpm monorepo** powered by **Turborepo**.
 
-## Using this example
+## Stack
 
-Run the following command:
+| Layer | Technology |
+|---|---|
+| API | NestJS 10, Swagger/OpenAPI |
+| Web | React 19, Vite 7, TanStack Query |
+| Auth | Clerk (JWT ready) |
+| Database | PostgreSQL 15 (Prisma ready) |
+| Cache | Redis 7 |
+| Infra | Docker, Docker Compose, Nginx |
+| Tooling | pnpm workspaces, Turborepo, Biome |
+
+## Project Structure
+
+```
+.
+├── apps/
+│   ├── api/          # NestJS backend (port 13000)
+│   └── web/          # React + Vite frontend (port 5173)
+├── packages/
+│   ├── contracts/    # Shared API types (frontend <-> backend)
+│   ├── core/         # Domain base classes & errors
+│   ├── shared/       # Utility helpers (slugify, pagination…)
+│   ├── infrastructure/ # DB / cache / auth adapter interfaces
+│   ├── ui/           # Shared React component library
+│   ├── typescript-config/ # Shared tsconfig bases
+│   └── eslint-config/     # Shared ESLint configs
+├── nginx/            # Nginx reverse-proxy config
+├── scripts/          # DB init scripts
+├── docker-compose.yml          # DB + Redis only
+├── docker-compose.dev.yml      # Full dev environment
+└── docker-compose.prod.yml     # Production environment
+```
+
+## Quick Start (Local)
+
+### 1. Prerequisites
+- Node.js 20+, pnpm 9+
+- Docker & Docker Compose
+
+### 2. Install dependencies
+```sh
+pnpm install
+```
+
+### 3. Set up environment variables
+```sh
+cp apps/api/.env.example apps/api/.env
+cp apps/web/.env.example apps/web/.env
+```
+Edit both `.env` files with your real values.
+
+### 4. Start databases
+```sh
+docker-compose up -d      # starts PostgreSQL + Redis
+```
+
+### 5. Run in development
+```sh
+pnpm dev                  # starts both api and web concurrently
+```
+
+- Frontend: http://localhost:5173  
+- Backend API: http://localhost:13000/api/v1  
+- Swagger Docs: http://localhost:13000/docs  
+
+## Docker Development
+
+Run the full stack (API + Web + DB + Redis) inside Docker:
 
 ```sh
-npx create-turbo@latest
+make dev          # build & start
+make dev-logs     # follow logs
+make dev-down     # stop
 ```
 
-## What's inside?
-
-This Turborepo includes the following packages/apps:
-
-### Apps and Packages
-
-- `docs`: a [Next.js](https://nextjs.org/) app
-- `web`: another [Next.js](https://nextjs.org/) app
-- `@repo/ui`: a stub React component library shared by both `web` and `docs` applications
-- `@repo/eslint-config`: `eslint` configurations (includes `eslint-config-next` and `eslint-config-prettier`)
-- `@repo/typescript-config`: `tsconfig.json`s used throughout the monorepo
-
-Each package/app is 100% [TypeScript](https://www.typescriptlang.org/).
-
-### Utilities
-
-This Turborepo has some additional tools already setup for you:
-
-- [TypeScript](https://www.typescriptlang.org/) for static type checking
-- [ESLint](https://eslint.org/) for code linting
-- [Prettier](https://prettier.io) for code formatting
-
-### Build
-
-To build all apps and packages, run the following command:
-
-```
-cd my-turborepo
-
-# With [global `turbo`](https://turborepo.dev/docs/getting-started/installation#global-installation) installed (recommended)
-turbo build
-
-# Without [global `turbo`](https://turborepo.dev/docs/getting-started/installation#global-installation), use your package manager
-npx turbo build
-yarn dlx turbo build
-pnpm exec turbo build
+Or without Make:
+```sh
+docker-compose -f docker-compose.dev.yml up -d
 ```
 
-You can build a specific package by using a [filter](https://turborepo.dev/docs/crafting-your-repository/running-tasks#using-filters):
+## Environment Variables
 
+| File | Purpose |
+|---|---|
+| `apps/api/.env` | NestJS API config (port, DB URL, JWT, Clerk) |
+| `apps/web/.env` | Vite frontend config (API URL, Clerk key) |
+| `.env.docker` | Passed to Docker Compose services |
+
+See `apps/api/.env.example` and `apps/web/.env.example` for all available variables.
+
+## Available Scripts
+
+```sh
+pnpm dev              # Run api + web concurrently
+pnpm build            # Build api + web
+pnpm lint             # Lint all apps with Biome
+pnpm format           # Format all apps with Biome
+pnpm check            # Biome check (lint + format)
+pnpm swagger          # Generate OpenAPI types from running API
+pnpm docker:dev       # docker-compose.dev.yml up -d
+pnpm docker:db        # docker-compose.yml up -d (DB only)
+pnpm docker:clean     # Remove all dev containers + volumes
 ```
-# With [global `turbo`](https://turborepo.dev/docs/getting-started/installation#global-installation) installed (recommended)
-turbo build --filter=docs
 
-# Without [global `turbo`](https://turborepo.dev/docs/getting-started/installation#global-installation), use your package manager
-npx turbo build --filter=docs
-yarn exec turbo build --filter=docs
-pnpm exec turbo build --filter=docs
+## API Endpoints
+
+| Method | Path | Description |
+|---|---|---|
+| GET | `/` | Welcome |
+| GET | `/health` | Health check |
+| GET | `/config` | API config info |
+| GET | `/api/v1/tenants` | List tenants |
+| GET | `/api/v1/users` | List users |
+| GET | `/docs` | Swagger UI |
+
+## Production
+
+```sh
+cp .env.docker .env.prod   # fill in real secrets
+make prod-build
+make prod-up
 ```
 
 ### Develop
@@ -123,6 +189,15 @@ yarn exec turbo link
 pnpm exec turbo link
 ```
 
+# Option 3 — Separate terminals
+pnpm install
+docker compose up -d              # DB only (port 5438 + 6379)
+cd apps/api && pnpm dev           # Terminal 1 → :13000
+cd apps/web && pnpm dev           # Terminal 2 → :5173
+
+# Option 2 — Full Docker
+docker compose -f docker-compose.dev.yml up -d
+
 ## Useful Links
 
 Learn more about the power of Turborepo:
@@ -133,3 +208,5 @@ Learn more about the power of Turborepo:
 - [Filtering](https://turborepo.dev/docs/crafting-your-repository/running-tasks#using-filters)
 - [Configuration Options](https://turborepo.dev/docs/reference/configuration)
 - [CLI Usage](https://turborepo.dev/docs/reference/command-line-reference)
+
+
