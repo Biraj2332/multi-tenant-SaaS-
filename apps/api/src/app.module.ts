@@ -6,6 +6,7 @@ import { RedisModule } from './modules/redis/redis.module';
 import { AuditModule } from './modules/audit/audit.module';
 import { AuthModule } from './modules/auth/auth.module';
 import { OnboardingModule } from './modules/onboarding/onboarding.module';
+import { StripeModule } from './modules/stripe/stripe.module';
 
 @Module({
   imports: [
@@ -15,6 +16,7 @@ import { OnboardingModule } from './modules/onboarding/onboarding.module';
     AuditModule,
     AuthModule,
     OnboardingModule,
+    StripeModule,
   ],
   controllers: [AppController],
   providers: [],

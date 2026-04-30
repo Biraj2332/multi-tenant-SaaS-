@@ -46,6 +46,12 @@ export default () => ({
     maxRequests: Number.parseInt(process.env.RATE_LIMIT_MAX_REQUESTS || '100', 10),
   },
 
+  // Stripe Configuration
+  stripe: {
+    secretKey: process.env.STRIPE_SECRET_KEY,
+    webhookSecret: process.env.STRIPE_WEBHOOK_SECRET,
+  },
+
   // CORS
   cors: {
     origin: process.env.CORS_ORIGIN || 'http://localhost:5173',
