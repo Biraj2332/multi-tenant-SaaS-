@@ -3,5 +3,17 @@
     {
       "mode": "auto"
     }
+  ],
+  "sqltools.connections": [
+    {
+      "name": "TenantOps Dev",
+      "driver": "PostgreSQL",
+      "server": "localhost",
+      "port": 5438,
+      "database": "tenantops_dev",
+      "username": "tenantops",
+      "password": "password",
+      "previewLimit": 50
+    }
   ]
 }

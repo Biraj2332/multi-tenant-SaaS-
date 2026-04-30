@@ -1,0 +1,10 @@
+export enum AuditTargetType {
+  USER = 'USER',
+  TENANT = 'TENANT',
+  MEMBERSHIP = 'MEMBERSHIP',
+  INVITATION = 'INVITATION',
+  PROJECT = 'PROJECT',
+  TOKEN = 'TOKEN',
+  WEBHOOK = 'WEBHOOK',
+  SYSTEM = 'SYSTEM',
+}
