@@ -23,7 +23,7 @@ import {
 } from '../hooks/useApi';
 import { usePermission } from '../hooks/usePermission';
 
-const PRIORITY_ICON: Record<string, { Icon: React.ComponentType<{ sx?: object }>; color: string }> = {
+const PRIORITY_ICON: Record<string, { Icon: React.ComponentType<{ sx?: object; className?: string }>; color: string }> = {
   urgent: { Icon: ReportProblemOutlinedIcon, color: 'text-red-400' },
   high: { Icon: ArrowUpwardOutlinedIcon, color: 'text-orange-400' },
   medium: { Icon: RemoveOutlinedIcon, color: 'text-yellow-400' },

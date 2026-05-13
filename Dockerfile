@@ -12,8 +12,8 @@ RUN apk add --no-cache \
     g++ \
     postgresql-client
 
-# Enable pnpm via corepack
-RUN corepack enable && corepack prepare pnpm@latest --activate
+# Enable pnpm via corepack (pin to v10 for Node 20 compatibility)
+RUN corepack enable && corepack prepare pnpm@10.33.2 --activate
 
 # Set working directory
 WORKDIR /app

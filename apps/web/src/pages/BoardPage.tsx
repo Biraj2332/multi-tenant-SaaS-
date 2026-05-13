@@ -1,9 +1,9 @@
-import { useState, useCallback, useRef } from 'react';
+import { useState, useCallback } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import ArrowBackOutlinedIcon from '@mui/icons-material/ArrowBackOutlined';
 import AddOutlinedIcon from '@mui/icons-material/AddOutlined';
 import FilterListOutlinedIcon from '@mui/icons-material/FilterListOutlined';
-import Navbar from '../components/layout/Navbar';
+import AppShell from '../components/layout/AppShell';
 import IssueDetailDrawer from '../components/board/IssueDetailDrawer';
 import { useProject, useTasks, useCreateTask, useUpdateTask } from '../hooks/useProjectApi';
 import { TASK_STATUSES } from '../types/project.types';
@@ -60,9 +60,8 @@ export default function BoardPage() {
   );
 
   return (
-    <div className="min-h-screen bg-[#0d0d0d]">
-      <Navbar />
-      <main className="pt-16">
+    <AppShell title={project?.name ?? 'Board'}>
+      <main>
         {/* Top bar */}
         <div className="border-b border-[#1f1f1f] px-6 py-3 flex items-center justify-between">
           <div className="flex items-center gap-3">
@@ -129,7 +128,6 @@ export default function BoardPage() {
               onDrop={handleDrop}
               onCardClick={setSelectedTaskId}
               onQuickCreate={handleQuickCreate}
-              isDragOver={draggedTask !== null && draggedTask.status !== col.key}
             />
           ))}
         </div>
@@ -141,7 +139,7 @@ export default function BoardPage() {
           onClose={() => setSelectedTaskId(null)}
         />
       )}
-    </div>
+    </AppShell>
   );
 }
 
@@ -154,7 +152,6 @@ function KanbanColumn({
   onDrop,
   onCardClick,
   onQuickCreate,
-  isDragOver,
 }: {
   status: TaskStatus;
   label: string;
@@ -164,7 +161,6 @@ function KanbanColumn({
   onDrop: (status: TaskStatus) => void;
   onCardClick: (id: string) => void;
   onQuickCreate: (status: TaskStatus) => void;
-  isDragOver: boolean;
 }) {
   const [dragOverActive, setDragOverActive] = useState(false);
 

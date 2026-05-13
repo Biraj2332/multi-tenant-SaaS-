@@ -34,32 +34,32 @@ help:
 
 # Development commands
 dev: dev-build
-	@docker-compose -f $(DEV_COMPOSE) up -d
+	@docker compose -f $(DEV_COMPOSE) up -d
 	@echo "[>>] Frontend: http://localhost:5173"
 	@echo "[>>] Backend:  http://localhost:13000"
 	@echo "[>>] API Docs: http://localhost:13000/docs"
 	@echo "[>>] Database: localhost:5432 (user: tenantops, pass: password)"
 
 dev-build:
-	@docker-compose -f $(DEV_COMPOSE) build --no-cache
+	@docker compose -f $(DEV_COMPOSE) build
 
 dev-down:
-	@docker-compose -f $(DEV_COMPOSE) down
+	@docker compose -f $(DEV_COMPOSE) down
 
 dev-logs:
-	@docker-compose -f $(DEV_COMPOSE) logs -f
+	@docker compose -f $(DEV_COMPOSE) logs -f
 
 dev-restart: dev-down dev
 
 # Production commands
 prod-up:
-	@docker-compose -f $(PROD_COMPOSE) up -d
+	@docker compose -f $(PROD_COMPOSE) up -d
 
 prod-down:
-	@docker-compose -f $(PROD_COMPOSE) down
+	@docker compose -f $(PROD_COMPOSE) down
 
 prod-build:
-	@docker-compose -f $(PROD_COMPOSE) build --no-cache
+	@docker compose -f $(PROD_COMPOSE) build --no-cache
 
 # Container access
 shell-api:
@@ -79,8 +79,8 @@ ps:
 	@docker ps -a
 
 clean:
-	@docker-compose -f $(DEV_COMPOSE) down -v
-	@docker-compose -f $(PROD_COMPOSE) down -v
+	@docker compose -f $(DEV_COMPOSE) down -v
+	@docker compose -f $(PROD_COMPOSE) down -v
 	@docker system prune -af
 
 prune:

@@ -25,6 +25,8 @@ export type Permission =
   | "settings:notifications"
   | "settings:security"
   | "audit-log:view"
+  | "bug:report"
+  | "member:change-role"
   | "org:delete";
 
 type PermissionMap = Record<Permission, boolean>;
@@ -56,6 +58,8 @@ export const PERMISSION_MATRIX: PermissionMatrix = {
     "settings:notifications": true,
     "settings:security": true,
     "audit-log:view": true,
+    "bug:report": true,
+    "member:change-role": true,
     "org:delete": true,
   },
   admin: {
@@ -83,6 +87,8 @@ export const PERMISSION_MATRIX: PermissionMatrix = {
     "settings:notifications": true,
     "settings:security": true,
     "audit-log:view": true,
+    "bug:report": true,
+    "member:change-role": true,
     "org:delete": false,
   },
   member: {
@@ -110,6 +116,8 @@ export const PERMISSION_MATRIX: PermissionMatrix = {
     "settings:notifications": true,
     "settings:security": true,
     "audit-log:view": false,
+    "bug:report": true,
+    "member:change-role": false,
     "org:delete": false,
   },
   viewer: {
@@ -137,6 +145,8 @@ export const PERMISSION_MATRIX: PermissionMatrix = {
     "settings:notifications": true,
     "settings:security": true,
     "audit-log:view": false,
+    "bug:report": false,
+    "member:change-role": false,
     "org:delete": false,
   },
 };
