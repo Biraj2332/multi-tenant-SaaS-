@@ -3,7 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import FolderOutlinedIcon from '@mui/icons-material/FolderOutlined';
 import AddOutlinedIcon from '@mui/icons-material/AddOutlined';
 import MoreHorizOutlinedIcon from '@mui/icons-material/MoreHorizOutlined';
-import Navbar from '../components/layout/Navbar';
+import AppShell from '../components/layout/AppShell';
 import NewProjectModal from '../components/projects/NewProjectModal';
 import { useProjects, useArchiveProject, useDeleteProject } from '../hooks/useProjectApi';
 import type { Project } from '../types/project.types';
@@ -15,9 +15,8 @@ export default function ProjectsPage() {
   const [showNewModal, setShowNewModal] = useState(false);
 
   return (
-    <div className="min-h-screen bg-[#0d0d0d]">
-      <Navbar />
-      <main className="pt-20 px-6">
+    <AppShell title="Projects">
+      <main className="pt-6 px-6">
         <div className="max-w-5xl mx-auto">
           <div className="flex items-center justify-between mb-8">
             <div>
@@ -58,7 +57,7 @@ export default function ProjectsPage() {
       </main>
 
       {showNewModal && <NewProjectModal onClose={() => setShowNewModal(false)} />}
-    </div>
+    </AppShell>
   );
 }
 
