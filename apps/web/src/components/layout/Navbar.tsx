@@ -1,21 +1,34 @@
 import { useClerk, SignedIn, SignedOut, UserButton } from '@clerk/clerk-react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
 import NotificationsOutlinedIcon from '@mui/icons-material/NotificationsOutlined';
+import OrgSwitcher from './OrgSwitcher';
 
 export default function Navbar() {
   const { openSignUp } = useClerk();
   const navigate = useNavigate();
+  const location = useLocation();
+  const isDashboard = location.pathname.startsWith('/dashboard');
 
   return (
     <nav className="fixed top-0 left-0 right-0 z-50 border-b border-[#1f1f1f] bg-[#0d0d0d]/80 backdrop-blur-md">
       <div className="max-w-6xl mx-auto flex items-center justify-between h-14 px-6">
-        <button
-          type="button"
-          onClick={() => navigate('/')}
-          className="text-white font-bold text-lg tracking-tight cursor-pointer bg-transparent border-none"
-        >
-          TenantOps
-        </button>
+        <div className="flex items-center gap-4">
+          <button
+            type="button"
+            onClick={() => navigate('/')}
+            className="text-white font-bold text-lg tracking-tight cursor-pointer bg-transparent border-none"
+          >
+            TenantOps
+          </button>
+
+          {isDashboard && (
+            <SignedIn>
+              <div className="hidden sm:block">
+                <OrgSwitcher />
+              </div>
+            </SignedIn>
+          )}
+        </div>
 
         <SignedOut>
           <div className="flex items-center gap-4">

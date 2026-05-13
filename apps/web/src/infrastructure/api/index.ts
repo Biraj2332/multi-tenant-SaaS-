@@ -21,6 +21,12 @@ apiClient.interceptors.request.use(
       config.headers.Authorization = `Bearer ${token}`;
     }
 
+    // Attach current org id for tenant resolution
+    const currentOrgId = localStorage.getItem('tenantops_current_org');
+    if (currentOrgId) {
+      config.headers['x-org-id'] = currentOrgId;
+    }
+
     // Log request in development
     if (import.meta.env.DEV) {
       console.log(`➡️ ${config.method?.toUpperCase()} ${config.url}`, {

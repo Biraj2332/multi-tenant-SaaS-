@@ -3,6 +3,7 @@ import ReactDOM from 'react-dom/client';
 import { BrowserRouter } from 'react-router-dom';
 import { ClerkProvider } from '@clerk/clerk-react';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
+import { OrgProvider } from './contexts/OrgContext';
 import App from './presentation/App';
 import './index.css';
 
@@ -19,7 +20,9 @@ ReactDOM.createRoot(document.getElementById('root')!).render(
     <ClerkProvider publishableKey={CLERK_KEY}>
       <QueryClientProvider client={queryClient}>
         <BrowserRouter>
-          <App />
+          <OrgProvider>
+            <App />
+          </OrgProvider>
         </BrowserRouter>
       </QueryClientProvider>
     </ClerkProvider>
