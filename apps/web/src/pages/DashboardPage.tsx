@@ -1,6 +1,6 @@
 import { useUser } from '@clerk/clerk-react';
 import { useNavigate } from 'react-router-dom';
-import Navbar from '../components/layout/Navbar';
+import AppShell from '../components/layout/AppShell';
 import { useOrg } from '../contexts/OrgContext';
 import { useProjects } from '../hooks/useProjectApi';
 import FolderOutlinedIcon from '@mui/icons-material/FolderOutlined';
@@ -28,9 +28,8 @@ export default function DashboardPage() {
   const { data: projects } = useProjects();
 
   return (
-    <div className="min-h-screen bg-[#0d0d0d]">
-      <Navbar />
-      <main className="pt-24 px-6">
+    <AppShell title="Dashboard">
+      <main className="pt-8 px-6">
         <div className="max-w-4xl mx-auto">
           <div className="flex items-center gap-3 mb-2">
             <h1 className="text-2xl font-bold text-white">
@@ -80,6 +79,6 @@ export default function DashboardPage() {
           </div>
         </div>
       </main>
-    </div>
+    </AppShell>
   );
 }
