@@ -9,6 +9,8 @@ declare global {
       tenantId?: string;
       tenantSchemaName?: string;
       tenantPlan?: string;
+      clerkUserId?: string;
+      membershipRole?: string;
     }
   }
 }
@@ -40,6 +42,16 @@ export class TenantMiddleware implements NestMiddleware {
     req.tenantId = tenant.tenantId;
     req.tenantSchemaName = tenant.schemaName;
     req.tenantPlan = tenant.plan;
+
+    // Resolve membership role if clerk user id is present
+    const clerkUserId = req.headers['x-clerk-user-id'] as string | undefined;
+    if (clerkUserId) {
+      req.clerkUserId = clerkUserId;
+      const membershipResult = await this.tenantService.validateMembership(clerkUserId, tenant.tenantId);
+      if (membershipResult.isOk()) {
+        req.membershipRole = membershipResult.value.role;
+      }
+    }
 
     next();
   }

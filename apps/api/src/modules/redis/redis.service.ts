@@ -50,6 +50,20 @@ export class RedisService implements TypedRedisClient, OnModuleDestroy {
     return ok((res as number) > 0);
   }
 
+  async delByPrefix(prefix: string): Promise<Result<void, RedisError>> {
+    const keys = await this.redis.keys(`${prefix}*`).catch((e: unknown) => e);
+    if (keys instanceof Error) {
+      return err(new RedisError(`Redis KEYS failed for prefix "${prefix}"`, keys));
+    }
+    if ((keys as string[]).length > 0) {
+      const res = await this.redis.del(...(keys as string[])).catch((e: unknown) => e);
+      if (res instanceof Error) {
+        return err(new RedisError(`Redis DEL failed for prefix "${prefix}"`, res));
+      }
+    }
+    return ok(undefined);
+  }
+
   async onModuleDestroy(): Promise<void> {
     await this.redis.quit();
   }

@@ -1,9 +1,12 @@
 import { useUser } from '@clerk/clerk-react';
+import { useNavigate } from 'react-router-dom';
 import Navbar from '../components/layout/Navbar';
 import { useOrg } from '../contexts/OrgContext';
+import { useProjects } from '../hooks/useProjectApi';
 import FolderOutlinedIcon from '@mui/icons-material/FolderOutlined';
 import PeopleOutlineOutlinedIcon from '@mui/icons-material/PeopleOutlineOutlined';
 import HistoryOutlinedIcon from '@mui/icons-material/HistoryOutlined';
+import ArrowForwardOutlinedIcon from '@mui/icons-material/ArrowForwardOutlined';
 
 const PlanBadge = ({ plan }: { plan: string }) => {
   const colors: Record<string, string> = {
@@ -20,7 +23,9 @@ const PlanBadge = ({ plan }: { plan: string }) => {
 
 export default function DashboardPage() {
   const { user } = useUser();
+  const navigate = useNavigate();
   const { currentOrg, isLoading } = useOrg();
+  const { data: projects } = useProjects();
 
   return (
     <div className="min-h-screen bg-[#0d0d0d]">
@@ -44,8 +49,20 @@ export default function DashboardPage() {
           </p>
 
           <div className="grid md:grid-cols-3 gap-4">
+            <div
+              onClick={() => navigate('/projects')}
+              className="border border-[#1f1f1f] bg-[#111] rounded-xl p-6 cursor-pointer hover:border-[#333] transition-colors group"
+            >
+              <div className="flex items-center justify-between mb-2">
+                <div className="flex items-center gap-2">
+                  <FolderOutlinedIcon sx={{ fontSize: 16, color: '#555' }} />
+                  <p className="text-xs text-[#555] uppercase tracking-widest">Projects</p>
+                </div>
+                <ArrowForwardOutlinedIcon sx={{ fontSize: 14, color: '#333' }} className="group-hover:text-[#666] transition-colors" />
+              </div>
+              <p className="text-2xl font-bold text-white">{projects?.length ?? '—'}</p>
+            </div>
             {[
-              { label: 'Projects', icon: FolderOutlinedIcon },
               { label: 'Members', icon: PeopleOutlineOutlinedIcon },
               { label: 'Audit Logs', icon: HistoryOutlinedIcon },
             ].map(({ label, icon: Icon }) => (

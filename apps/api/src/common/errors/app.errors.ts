@@ -36,6 +36,33 @@ export class ValidationError extends AppError {
 export class ConflictError extends AppError {
   readonly _tag = 'ConflictError' as const;
 }
+export class ForbiddenError extends AppError {
+  readonly _tag = 'ForbiddenError' as const;
+}
+export class RateLimitError extends AppError {
+  readonly _tag = 'RateLimitError' as const;
+  constructor(message: string, public readonly retryAfterSec: number, cause?: unknown) {
+    super(message, cause);
+  }
+}
+export class SprintError extends AppError {
+  readonly _tag = 'SprintError' as const;
+}
+export class IssueError extends AppError {
+  readonly _tag = 'IssueError' as const;
+}
+export class MemberError extends AppError {
+  readonly _tag = 'MemberError' as const;
+}
+export class NotifError extends AppError {
+  readonly _tag = 'NotifError' as const;
+}
+export class SettingsError extends AppError {
+  readonly _tag = 'SettingsError' as const;
+}
+export class AnalyticsError extends AppError {
+  readonly _tag = 'AnalyticsError' as const;
+}
 
 export type TenantOpsError =
   | AuthError
@@ -47,7 +74,15 @@ export type TenantOpsError =
   | NotFoundError
   | OnboardingError
   | ValidationError
-  | ConflictError;
+  | ConflictError
+  | ForbiddenError
+  | RateLimitError
+  | SprintError
+  | IssueError
+  | MemberError
+  | NotifError
+  | SettingsError
+  | AnalyticsError;
 
 export function isAppError(err: unknown): err is AppError {
   return err instanceof AppError;

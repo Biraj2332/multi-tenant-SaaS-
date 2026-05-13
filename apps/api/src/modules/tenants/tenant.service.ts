@@ -16,8 +16,10 @@ const TENANT_SCHEMA_DDL = `
   CREATE TABLE IF NOT EXISTS projects (
     id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
     name VARCHAR(255) NOT NULL,
+    short_code VARCHAR(10) NOT NULL,
     description TEXT,
     color VARCHAR(7) NOT NULL DEFAULT '#7c3aed',
+    icon VARCHAR(50) NOT NULL DEFAULT 'FolderOutlined',
     archived_at TIMESTAMPTZ,
     created_by UUID NOT NULL,
     created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
@@ -46,6 +48,7 @@ const TENANT_SCHEMA_DDL = `
     assignee_id UUID,
     reporter_id UUID NOT NULL,
     due_date TIMESTAMPTZ,
+    labels TEXT[] NOT NULL DEFAULT '{}',
     position INTEGER NOT NULL DEFAULT 0,
     created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
     updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
@@ -73,11 +76,47 @@ const TENANT_SCHEMA_DDL = `
   CREATE TABLE IF NOT EXISTS notifications (
     id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
     user_id UUID NOT NULL,
+    type VARCHAR(50) NOT NULL DEFAULT 'system',
     title VARCHAR(255) NOT NULL,
     body TEXT,
+    resource_type VARCHAR(50),
+    resource_id UUID,
     read_at TIMESTAMPTZ,
     created_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
   );
+
+  CREATE TABLE IF NOT EXISTS notification_preferences (
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    user_id UUID NOT NULL,
+    category VARCHAR(50) NOT NULL,
+    email_enabled BOOLEAN NOT NULL DEFAULT TRUE,
+    in_app_enabled BOOLEAN NOT NULL DEFAULT TRUE,
+    quiet_hours_start VARCHAR(5),
+    quiet_hours_end VARCHAR(5),
+    updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+    UNIQUE(user_id, category)
+  );
+
+  CREATE TABLE IF NOT EXISTS issues (
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    project_id UUID NOT NULL REFERENCES projects(id) ON DELETE CASCADE,
+    sprint_id UUID REFERENCES sprints(id) ON DELETE SET NULL,
+    title VARCHAR(500) NOT NULL,
+    description TEXT,
+    type VARCHAR(20) NOT NULL DEFAULT 'TASK',
+    severity VARCHAR(20),
+    status VARCHAR(20) NOT NULL DEFAULT 'OPEN',
+    priority VARCHAR(20) NOT NULL DEFAULT 'MEDIUM',
+    assignee_id UUID,
+    rank DOUBLE PRECISION NOT NULL DEFAULT 0,
+    reported_by_user_id UUID NOT NULL,
+    steps_to_reproduce TEXT,
+    created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+    updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
+  );
+
+  ALTER TABLE sprints ADD COLUMN IF NOT EXISTS status VARCHAR(20) NOT NULL DEFAULT 'PLANNED';
+  ALTER TABLE sprints ADD COLUMN IF NOT EXISTS started_at TIMESTAMPTZ;
 
   CREATE TABLE IF NOT EXISTS members_cache (
     user_id UUID PRIMARY KEY,
@@ -89,11 +128,19 @@ const TENANT_SCHEMA_DDL = `
   );
 
   CREATE INDEX IF NOT EXISTS idx_tasks_project ON tasks(project_id);
+  CREATE INDEX IF NOT EXISTS idx_tasks_project_status ON tasks(project_id, status);
   CREATE INDEX IF NOT EXISTS idx_tasks_assignee ON tasks(assignee_id);
   CREATE INDEX IF NOT EXISTS idx_tasks_status ON tasks(status);
   CREATE INDEX IF NOT EXISTS idx_tasks_sprint ON tasks(sprint_id);
   CREATE INDEX IF NOT EXISTS idx_comments_task ON comments(task_id);
   CREATE INDEX IF NOT EXISTS idx_activity_target ON activity_logs(target_type, target_id);
+  CREATE INDEX IF NOT EXISTS idx_activity_entity_created ON activity_logs(target_id, created_at DESC);
+  CREATE INDEX IF NOT EXISTS idx_notif_user_read ON notifications(user_id, read_at, created_at DESC);
+  CREATE INDEX IF NOT EXISTS idx_notif_unread ON notifications(user_id) WHERE read_at IS NULL;
+  CREATE INDEX IF NOT EXISTS idx_issues_project_type_status ON issues(project_id, type, status);
+  CREATE INDEX IF NOT EXISTS idx_issues_sprint_rank ON issues(sprint_id, rank);
+  CREATE INDEX IF NOT EXISTS idx_issues_severity ON issues(severity, status, created_at DESC);
+  CREATE UNIQUE INDEX IF NOT EXISTS idx_one_active_sprint ON sprints(project_id) WHERE status = 'ACTIVE';
   CREATE INDEX IF NOT EXISTS idx_notifications_user ON notifications(user_id);
   CREATE INDEX IF NOT EXISTS idx_sprints_project ON sprints(project_id);
 `;
